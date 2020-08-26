@@ -1,7 +1,11 @@
+-- COMPLEX ARITHMETIC
 data Complex = Complex {
     real      :: Double,
     imaginary :: Double
-} deriving Show
+}
+
+instance Show Complex where
+    show (Complex r c) = show r ++ "+" ++ show c ++ "i"
 
 data Polar = Polar {
     magnitude :: Double,
@@ -50,5 +54,47 @@ powerPolar (Polar m a) e
     | e >= 1 || e == 0 = Polar (m^e) (a * fromIntegral e)
     | otherwise = error "Only positive integers allowed in the exponent"
 
+-- MATRICES
+
+data Matrix = Matrix {
+    mRows :: Int,
+    mCols :: Int,
+    mData :: [[Complex]]
+} deriving Show
+
+getMatrixStr :: Matrix -> String
+getMatrixStr m = formatMatrix "" $ mData m
+    where
+    formatMatrix out (d:dx)
+        | null dx = out ++ show d ++ "\n"
+        | otherwise = formatMatrix (out ++ show d ++ "\n") dx
+
+addMatrices :: Matrix -> Matrix -> Matrix
+addMatrices m1 m2
+    | (mRows m1) == (mRows m2) && (mCols m1) == (mCols m2) = Matrix (mRows m1) (mCols m1) $ zipWith (\e1 e2 -> zipWith addComplex e1 e2) (mData m1) (mData m2)
+    | otherwise = error $ "Matrix addition incompatible with matrices " ++ (show $ mRows m1) ++ "x" ++ (show $ mCols m1) ++ " and "++ (show $ mRows m2) ++ "x" ++ (show $ mCols m2)
+
+
+scalarMultiplyMatrix :: Complex -> Matrix -> Matrix
+scalarMultiplyMatrix scalar m = Matrix (mRows m) (mCols m) $ map (map (multiplyComplex scalar)) (mData m)
+
+inverseMatrix :: Matrix -> Matrix
+inverseMatrix m = scalarMultiplyMatrix (Complex (-1) 0) m
+
+multiplyMatrices :: Matrix -> Matrix -> Matrix
+multiplyMatrices m1 m2
+    | (mCols m1) /= (mRows m2) = error $ "Matrix multiplication incompatible with matrices " ++ (show $ mRows m1) ++ "x" ++ (show $ mCols m1) ++ " and "++ (show $ mRows m2) ++ "x" ++ (show $ mCols m2)
+    | otherwise = Matrix (mRows m1) (mCols m2) $ map ((\x -> foldl1 (zipWith addComplex) x) . zipWith (flip (map . multiplyComplex)) (mData m2)) (mData m1)
+
+listToMatrix :: Int -> Int -> [[(Double,Double)]] -> Matrix
+listToMatrix r c l = Matrix r c $ map (map (\x -> Complex (fst x) (snd x))) l
+
 main :: IO ()
-main = print (modulusComplex (Complex (-1) 1))
+main =
+    let m1 = listToMatrix 4 4 [ [(1,0),(0,0),(0,0),(0,0)],
+                                [(0,0),(1,0),(0,0),(0,0)],
+                                [(0,0),(0,0),(0,0),(1,0)],
+                                [(0,0),(0,0),(1,0),(0,0)]]
+        m2 = listToMatrix 4 1 [[(0,0)],[(0,0)],[(0,0)],[(1,0)]]
+    in
+    putStr $ getMatrixStr $ multiplyMatrices m1 m2
