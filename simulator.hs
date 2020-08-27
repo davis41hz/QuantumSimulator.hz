@@ -136,11 +136,7 @@ isUnitary m
     | otherwise = identityMatrix (mRows m) == (multiplyMatrices m $ adjointMatrix m)
 
 tensorMatrices :: Matrix -> Matrix -> Matrix
-tensorMatrices m1 m2 =
-    let
-    doThing r1 r2 = [multiplyComplex e1 e2 | e1 <- r1, e2 <- r2]
-    in
-    Matrix (mRows m1 * mRows m2) (mCols m1 * mCols m2) [doThing row1 row2 | row1 <- (mData m1), row2 <- (mData m2)]
+tensorMatrices m1 m2 = Matrix (mRows m1 * mRows m2) (mCols m1 * mCols m2) [[multiplyComplex e1 e2 | e1 <- row1, e2 <- row2] | row1 <- (mData m1), row2 <- (mData m2)]
 
 identityMatrix :: Int -> Matrix
 identityMatrix n =
