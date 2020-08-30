@@ -37,6 +37,9 @@ conjugateComplex (Complex r i) = Complex r (-i)
 modulusComplex :: Complex -> Double
 modulusComplex (Complex r i) = sqrt (r*r + i*i)
 
+amplitudeToProb :: Complex -> Double
+amplitudeToProb (Complex r i) = r*r + i*i
+
 cartesianToPolar :: Complex -> Polar
 cartesianToPolar (Complex r i)
     | r > 0 = Polar (modulusComplex (Complex r i)) (atan i/r)

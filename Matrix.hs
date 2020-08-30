@@ -56,12 +56,15 @@ adjointMatrix m = transposeMatrix(conjugateMatrix m)
 
 innerProductVectors :: Matrix -> Matrix -> Complex
 innerProductVectors v1 v2
-    | mRows v1 == mRows v2 && mCols v1 == 1 && mCols v2 == 1 = foldl addComplex (Complex 0 0) $ zipWith (\x1 x2 -> multiplyComplex (head x1) (conjugateComplex (head x2))) (mData v1) (mData v2)
+    | mRows v1 == mRows v2 && mCols v1 == 1 && mCols v2 == 1 = head $ head $ mData $ multiplyMatrices (adjointMatrix v1) v2
     | otherwise = error $ "Invalid matrix for inner product. Requires two equal length column vectors. Not " ++ show (mRows v1) ++ "x" ++ show (mCols v1) ++ " and "++ show (mRows v2) ++ "x" ++ show (mCols v2)
 
 
 normVector :: Matrix -> Double
 normVector v = sqrt $ real $ innerProductVectors v v
+
+squareNormVector :: Matrix -> Double
+squareNormVector v = real $ innerProductVectors v v
 
 distanceVectors :: Matrix -> Matrix -> Double
 distanceVectors v1 v2 = normVector (subtractMatrices v1 v2)
@@ -82,6 +85,9 @@ identityMatrix n =
     let range = [1..n]
     in
     Matrix n n [ [if x == y then Complex 1 0 else Complex 0 0 | x <- range] | y <- range]
+
+zeroMatrix :: Int -> Matrix
+zeroMatrix n = Matrix 0 0 $ replicate n $ replicate n (Complex 0 0)
 
 getMatrixStr :: Matrix -> String
 getMatrixStr m = formatMatrix "" $ mData m
