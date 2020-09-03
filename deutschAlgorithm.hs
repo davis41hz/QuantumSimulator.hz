@@ -29,10 +29,10 @@ balancedNot = Matrix 4 4 [  [zero, one, zero, zero],
                             [zero, zero, zero, one] ]
 
 
-main :: IO ()
-main = do
-    rng <- randomIO :: IO Double
-    let chosenFunction = constant1
-    if deutschIsConstant rng chosenFunction
-    then putStrLn "The blackbox is constant"
-    else putStrLn "The blackbox is balanced"
+-- main :: IO ()
+-- main = do
+--     rng <- randomIO :: IO Double
+--     let chosenFunction = balancedIdentity
+--     if deutschIsConstant rng chosenFunction
+--     then putStrLn "The blackbox is constant"
+--     else putStrLn "The blackbox is balanced"

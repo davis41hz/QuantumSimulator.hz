@@ -32,6 +32,9 @@ scalarMultiplyMatrix scalar m = Matrix (mRows m) (mCols m) $ map (map (multiplyC
 tensorMatrices :: Matrix -> Matrix -> Matrix
 tensorMatrices m1 m2 = Matrix (mRows m1 * mRows m2) (mCols m1 * mCols m2) [[multiplyComplex e1 e2 | e1 <- row1, e2 <- row2] | row1 <- mData m1, row2 <- mData m2]
 
+tensorSelfMatrix :: Matrix -> Int -> Matrix
+tensorSelfMatrix m 1 = m
+tensorSelfMatrix m n = tensorSelfMatrix (tensorMatrices m m) (n - 1)
 
 traceMatrix :: Matrix -> Complex
 traceMatrix m

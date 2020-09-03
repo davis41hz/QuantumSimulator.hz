@@ -2,7 +2,6 @@ module Sim where
 import           Complex
 import           Matrix
 import           Operations
-import           System.Random
 
 
 -- State vector , which index in the vector we want probability of
@@ -37,8 +36,4 @@ measureState rng state = collapse rng 0 0 $ mData $ amplitudeVectorToProbVector 
         | otherwise = index
 
 
--- main :: IO ()
--- main = do
---     rng <- randomIO :: IO Double
---     print $ measureState rng $ multiplyMatrices (tensorMatrices hadamardOp hadamardOp) s1 where
---         s1 = Matrix 4 1 [[one],[zero],[zero],[zero]]
+main = putStr $ getMatrixStr $ tensorSelfMatrix hadamardOp 2
